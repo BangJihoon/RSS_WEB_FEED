@@ -1,7 +1,10 @@
 * 공고문 Crowlling 프로그램
 
-freeze 모듈을 이용하여 pip-requirements를 뽑아두었다. 		[pip freeze > pip-requirements.txt]
-pip-requirements.txt 를통해 한번에 필요한 모듈을 설치할수있다. 	[pip install pip-requirements.txt] 
+freeze 모듈을 이용하여 pip-requirements를 뽑아두었다. 		
+[pip freeze > pip-requirements.txt]
+
+pip-requirements.txt 를통해 한번에 필요한 모듈을 설치할수있다. 	
+[pip install pip-requirements.txt] 
 
 크롤링프로젝트 수정을 위해 C:안에 chromdrive가 필요하다.
 
