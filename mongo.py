@@ -32,7 +32,7 @@ def store():
 
 
 def check_point_save(name, title):
-    collection = db.get_collection('check_point123')
+    collection = db.get_collection('check_point')
     post = {
         "name": name,
         "title": title,
