@@ -1,4 +1,4 @@
-* 공고문 Crowlling 프로그램
+# 공고문 Crowlling 프로그램
 
 기존의 selenium모듈의 webdriver를 이용한 크롤링은 Dom이 그려지고 나서 접근하므로, 시간이 느리고,
 네트워크 환경에 따라 신뢰성이 떨어졌다.
