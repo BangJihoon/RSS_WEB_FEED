@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 conn = pymongo.MongoClient('mongodb+srv://bang:bang@cluster0-uiqcf.mongodb.net/test?retryWrites=true')
 db = conn.get_database('bluevisor')
 
-date = datetime.now().strftime('%Y-%m-%d %H:%M')
+date = datetime.now().strftime('%Y-%m-%d')
 
 standard_date = datetime.today() - timedelta(3)
 def store():
@@ -36,7 +36,7 @@ def check_point_save(name, title):
     post = {
         "name": name,
         "title": title,
-        "date": date
+        "save_date": date
     }
     collection.update({"name": name},post,upsert=True)
 
@@ -47,7 +47,8 @@ def post_save(name, title, link, pdate):
         "name": name,
         "title": title,
         "link": link,
-        "date": pdate
+        "date": pdate,
+        "save_date": date
     }
     collection.update({"name": name},post,upsert=True)
 
@@ -59,7 +60,7 @@ def check_point_read(name):
 
 
 def is_saved(title):
-    collection = db.get_collection('post')
+    collection = db.get_collection('posts')
     return collection.find_one({"title": title})
 
 
@@ -71,19 +72,20 @@ def result():
     file = open('output.txt', 'r')
     lines = file.readlines()
 
-    filedate = datetime.now().strftime('%Y-%m-%d-%H-%M') + '.txt'
     file2 = open('result.txt', 'a')
 
-    file2.write(filedate + '\n\n')
+    name = ''
 
     for line in lines:
         line = line.strip()
         tld = line.split("*}(")     # title, link, date
         if len(tld) == 1:
-            file2.write('\n'+tld[0]+'\n\n')
+            name = tld[0]
         else:
-            file2.write(tld[0]+'\n'+tld[1]+'\n'+tld[2]+'\n')
-
+            if name == 'kstartup':
+                file2.write('이름: '+name+'\n제목: '+tld[0]+'\n링크: '+tld[1]+'\n마감일: '+tld[2]+'\n\n')
+            else :
+                file2.write('이름: ' + name + '\n제목: ' + tld[0] + '\n링크: ' + tld[1] + '\n등록일: ' + tld[2] + '\n\n')
     file.close()
     file2.close()
 
