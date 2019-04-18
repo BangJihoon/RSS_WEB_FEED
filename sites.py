@@ -13,6 +13,8 @@ today = datetime.now()
 ''' 
 kotra, nipa, sba, kisa, nia, kdata, moel, bepa
 '''
+
+
 def kotra_scan():
     # 코트라 사이트
     name = 'Kotra'
@@ -41,7 +43,7 @@ def kotra_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
 
 def nipa_scan():
@@ -76,7 +78,7 @@ def nipa_scan():
                 break
             else:
                 mongo.post_save(names[j], title, link, date)
-                print('이름 : ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+                print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def sba_scan():
@@ -107,7 +109,7 @@ def sba_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def kisa_scan():
@@ -137,7 +139,7 @@ def kisa_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n게시일: ' + date + '\n')
 
 
 def nia_scan():
@@ -171,7 +173,7 @@ def nia_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def kdata_scan():
@@ -200,7 +202,7 @@ def kdata_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : '+name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+            print('이름: '+name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def moel_scan():
@@ -230,7 +232,8 @@ def moel_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+
 
 def bepa_scan():
     name = '부산경제진흥원'
@@ -263,7 +266,7 @@ def bepa_scan():
                 break
             else:
                 mongo.post_save(name, title, link, date)
-                print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+                print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def bi_scan():
@@ -294,16 +297,74 @@ def bi_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
+
+
+def kised_scan():
+    # 창업진흥원 사이트
+    name = '창업진흥원'
+
+    # 신청가능 사업 공지
+    req = requests.get('https://www.kised.or.kr/not/notice2.asp')
+    req.encoding= 'euc-kr'
+    html = req.text
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # selector 로 데이터가저오기
+    titles = soup.select('td > a')
+    dates = soup.select('tr > td:nth-child(4)')
+
+    # 체크포인트 불러오기, 저장하기
+    check_point = mongo.check_point_read(name)['title']
+    mongo.check_point_save(name, titles[0].text)
+
+    # 데이터 변수로 받아서 txt 저장
+    for i in range(len(titles)):
+        title = titles[i].text
+        link = titles[i].get('href')
+        date = dates[i].text
+        if check_point == title:
+            break
+        else:
+            mongo.post_save(name, title, link, date)
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+
+
+def busanit_scan():
+    for j in range(2):
+        names = ['부산정보산업진흥원_공지사항', '부산정보산업진흥원_사업공고']
+        urls = ['http://busanit.or.kr/board/list.asp?bcode=notice_e','http://busanit.or.kr/board/list.asp?bcode=notice']
+
+        # 신청가능 사업 공지
+        req = requests.get(urls[j])
+        req.encoding = 'utf-8'
+        html = req.text
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # selector 로 데이터가저오기
+        titles = soup.select('td > a')
+        dates = soup.select('tr > td:nth-child(3)')
+
+        # 체크포인트 불러오기, 저장하기
+        check_point = mongo.check_point_read(names[j])['title']
+        mongo.check_point_save(names[j], titles[0].text)
+
+        # 데이터 변수로 받아서 txt 저장
+        for i in range(len(titles)):
+            title = titles[i].text
+            link = 'http://busanit.or.kr/board/'+titles[i].get('href')
+            date = dates[i].text
+            if check_point == title:
+                break
+            else:
+                mongo.post_save(names[j], title, link, date)
+                print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+
 
 # ---------------------------- 동적인 웹 -----------------------
 '''
-    
     msit, 
-    kised, 
-    busanit, 
     kstartup
-    
 '''
 
 
@@ -338,126 +399,7 @@ def msit_scan(driver, standard_date):
             break
 
 
-def kised_scan(driver, standard_date):
-    name = '창업진흥원'
-    print(name)
-
-    # 창업진흥원 신청사업 url
-    url = 'https://www.kised.or.kr/not/notice2.asp'
-
-    # 드라이버로 웹 열기
-    driver.get(url)
-    time.sleep(2)
-
-    # 공지목록 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="main_container"]/div[2]/table/tbody/tr')
-
-    # 지난번 저장했던 포스트 가져오기
-    check_point = mongo.check_point_read(name)['title']
-
-    # 기준이될 point  저장
-    mongo.check_point_save(name, boards_list[0].find_element_by_class_name('subject').text)
-
-    for x in boards_list:
-        if check_point != x.find_element_by_class_name('subject').text:
-            # 신청기한이 기준보다 최신으로 올라온 공지를 크롤링
-            if x.find_element_by_xpath('./td[4]').text > standard_date.strftime("%Y-%m-%d"):
-                print(x.find_element_by_class_name('subject').text + '*}(' + x.find_element_by_xpath(
-                    './td[4]').text + '*}(' + x.find_element_by_tag_name('a').get_attribute('href'))
-        else:
-            break
-
-
-def busanit_scan(driver, standard_date):
-    name = '부산정보산업진흥원'
-    print(name)
-
-    # 부산정보산업진흥원 http://busanit.or.kr/ 공지사항
-    url = 'http://busanit.or.kr/board/list.asp?bcode=notice_e'
-
-    # 드라이버로 웹 열기
-    driver.get(url)
-    time.sleep(2)
-
-    # 공지목록 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="contents"]/div[2]/table/tbody/tr')
-
-    # 지난번 저장했던 포스트 가져오기
-    check_point = mongo.check_point_read(name)['title']
-
-    # 기준이될 point  저장
-    mongo.check_point_save(name, boards_list[0].find_element_by_tag_name('a').get_attribute("title"))
-
-    for x in boards_list:
-        if check_point != x.find_element_by_tag_name('a').get_attribute("title"):
-            # 신청기한이 기준보다 최신으로 올라온 공지를 크롤링
-            if x.find_element_by_xpath('./td[3]').text > standard_date.strftime("%Y-%m-%d"):
-                print(x.find_element_by_tag_name('a').get_attribute("title") + '*}(' + x.find_element_by_xpath(
-                    './td[3]').text + '*}(' + x.find_element_by_tag_name('a').get_attribute("href"))
-        else:
-            break
-
-    # 부산정보산업진흥원 http://busanit.or.kr/ 사업공고
-    url = 'http://busanit.or.kr/board/list.asp?bcode=notice'
-
-    # 드라이버로 웹 열기
-    driver.get(url)
-
-    # 사업공고 목록 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="contents"]/div[2]/table/tbody/tr')
-
-    # 지난번 저장했던 포스트 가져오기
-    check_point = mongo.check_point_read(name + '1')['title']
-
-    # 기준이될 point  저장
-    mongo.check_point_save(name + '1', boards_list[0].find_element_by_tag_name('a').get_attribute("title"))
-
-    for x in boards_list:
-        if check_point != x.find_element_by_tag_name('a').get_attribute("title"):
-            # 신청기한이 기준보다 최신으로 올라온 공지를 크롤링
-            if x.find_element_by_xpath('./td[3]').text > standard_date.strftime("%Y-%m-%d"):
-                print(x.find_element_by_tag_name('a').get_attribute("title") + '*}(' + x.find_element_by_xpath(
-                    './td[3]').text + '*}(' + x.find_element_by_tag_name('a').get_attribute("href"))
-        else:
-            break
-
-
-def bi_scan(driver, standard_date):
-    name = '창업보육센터 네트워크시스템'
-    print(name)
-
-    # 창업보육센터 지원사업 공고게시판 url
-    url = 'http://www.bi.go.kr/board/list.do?boardID=RECRUIT&frefaceCode=ANNOUNCE'
-
-    # 드라이버로 웹 열기
-    driver.get(url)
-    time.sleep(2)
-
-    # 공지목록 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="boardFormVO"]/div[2]/div[2]/div/table/tbody/tr')
-    boards_list.pop(0)
-
-    # 지난번 저장했던 포스트 가져오기
-    check_point = mongo.check_point_read(name)['title']
-
-    # 기준이될 point  저장
-    mongo.check_point_save(name, boards_list[0].find_element_by_tag_name('a').text)
-
-    for x in boards_list:
-        if check_point != x.find_element_by_tag_name('a').text:
-            # 신청기한이 기준보다 최신으로 올라온 공지를 크롤링
-            duedate = x.find_element_by_xpath('./td[5]').text.split(' ~ ').pop(1)
-            if duedate > standard_date.strftime("%Y-%m-%d"):
-                title = x.find_element_by_tag_name('a').text
-                params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
-                print(title + '*}(' + x.find_element_by_xpath(
-                    './td[5]').text + '*}(' + "http://www.bi.go.kr/board/editView.do?boardID=RECRUIT&frefaceCode=ANNOUNCE&boardVO.postSeq=" +
-                      params[0] + "&boardVO.registDate=" + params[1] + "&boardVO.viewFlag=view")
-        else:
-            break
-
-
-def kstartup_scan(driver, standard_date):
+def kstartup_scan(driver):
     name = 'kstartup'
     print(name)
 
@@ -497,8 +439,7 @@ def kstartup_scan(driver, standard_date):
                 link = board_url + params[2]
             else:
                 link = "링크오류"
-            print(title + '*}(' + date + '*}(' + link)
-            # print('제목 : '+title + '\n링크 : ' + link + '\n날짜: ' + date)
+            print(title + '*}(' + link + '*}(' + date )
 
     # 페이지별 공지 가져오기
     boards_list2 = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[2]/li')
@@ -531,8 +472,7 @@ def kstartup_scan(driver, standard_date):
                     link = board_url + params[2]
                 else:
                     link = "링크오류"
-                print(title + '*}(' + date + '*}(' + link)
-                # print('제목 : '+title + '\n링크 : ' + link + '\n날짜: ' + date)
+                print(title + '*}(' + link+ '*}(' + date )
             else:
                 flag = True
                 break
