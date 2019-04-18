@@ -37,8 +37,8 @@ def kotra_scan():
         title = titles[i].text
         link = url + titles[i].get('href').split('\'').pop(1)
         date = dates[i].text
-        sdate = date.split("~").pop(0)
-        edate = date.split("~").pop(1)
+        sdate = date.split(" ~ ").pop(0)
+        edate = date.split(" ~ ").pop(1)
 
         if check_point == title:
             break
@@ -371,7 +371,7 @@ def busanit_scan():
 '''
 
 
-def msit_scan(driver,standard_date):
+def msit_scan(driver):
     name = '과학기술정보통신부'
     print(name)
 
@@ -393,8 +393,7 @@ def msit_scan(driver,standard_date):
 
     for x in boards_list:
         if check_point != x.find_element_by_class_name('title').text:
-            if (x.find_element_by_xpath('./td[3]').text.split('\n').pop(1) + '.' + x.find_element_by_xpath('./td[3]').text.split('\n').pop(0)) > standard_date.strftime("%Y.%m.%d"):
-                print(x.find_element_by_class_name('title').text + '*}(' + x.find_element_by_xpath('./td[3]/span/span[3]').text + '.' + x.find_element_by_xpath('./td[3]/span/span[2]').text + '*}(' +' *}(' + x.find_element_by_tag_name('a').get_attribute('href'))
+            print(x.find_element_by_class_name('title').text + '*}(' + x.find_element_by_xpath('./td[3]/span/span[3]').text + '.' + x.find_element_by_xpath('./td[3]/span/span[2]').text + '*}(' +' *}(' + x.find_element_by_tag_name('a').get_attribute('href'))
         else:
             break
 
