@@ -20,8 +20,7 @@ def kotra_scan():
     name = 'Kotra'
     url = 'http://www.kotra.or.kr'
     # 신청가능 사업 공지
-    req = requests.get(
-        'http://www.kotra.or.kr/kh/business/busiList.do?menuDiv=1&MENU_CD=T0501&TOP_MENU_CD=T0500&boardType=0')
+    req = requests.get('http://www.kotra.or.kr/kh/business/busiList.do?menuDiv=1&MENU_CD=T0501&TOP_MENU_CD=T0500&boardType=0')
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -38,11 +37,13 @@ def kotra_scan():
         title = titles[i].text
         link = url + titles[i].get('href').split('\'').pop(1)
         date = dates[i].text
+        sdate = date.split("~").pop(0)
+        edate = date.split("~").pop(1)
 
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
 
@@ -77,7 +78,7 @@ def nipa_scan():
             if check_point == title:
                 break
             else:
-                mongo.post_save(names[j], title, link, date)
+                mongo.post_save(names[j], title, link, date, '')
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -108,7 +109,7 @@ def sba_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -138,8 +139,8 @@ def kisa_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
-            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n게시일: ' + date + '\n')
+            mongo.post_save(name, title, link, date, '')
+            print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def nia_scan():
@@ -172,7 +173,7 @@ def nia_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -201,7 +202,7 @@ def kdata_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, date, '')
             print('이름: '+name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -231,7 +232,7 @@ def moel_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -265,7 +266,7 @@ def bepa_scan():
             if check_point == title:
                 break
             else:
-                mongo.post_save(name, title, link, date)
+                mongo.post_save(name, title, link, date, '')
                 print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -292,11 +293,13 @@ def bi_scan():
         params = re.findall("\d+", titles[i].get('href'))
         link = url[0] + params[0] + url[1] + params[1] + url[2]
         date = dates[i].text
+        sdate = date.split(" ~ ").pop(0)
+        edate = date.split(" ~ ").pop(1)
 
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
 
@@ -326,7 +329,7 @@ def kised_scan():
         if check_point == title:
             break
         else:
-            mongo.post_save(name, title, link, date)
+            mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -357,7 +360,7 @@ def busanit_scan():
             if check_point == title:
                 break
             else:
-                mongo.post_save(names[j], title, link, date)
+                mongo.post_save(names[j], title, link, date, '')
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
@@ -368,7 +371,7 @@ def busanit_scan():
 '''
 
 
-def msit_scan(driver, standard_date):
+def msit_scan(driver,standard_date):
     name = '과학기술정보통신부'
     print(name)
 
@@ -390,11 +393,8 @@ def msit_scan(driver, standard_date):
 
     for x in boards_list:
         if check_point != x.find_element_by_class_name('title').text:
-            if (x.find_element_by_xpath('./td[3]').text.split('\n').pop(1) + '.' + x.find_element_by_xpath(
-                    './td[3]').text.split('\n').pop(0)) > standard_date.strftime("%Y.%m.%d"):
-                print(x.find_element_by_class_name('title').text + '*}(' + x.find_element_by_xpath(
-                    './td[3]/span/span[3]').text + '.' + x.find_element_by_xpath(
-                    './td[3]/span/span[2]').text + '*}(' + x.find_element_by_tag_name('a').get_attribute('href'))
+            if (x.find_element_by_xpath('./td[3]').text.split('\n').pop(1) + '.' + x.find_element_by_xpath('./td[3]').text.split('\n').pop(0)) > standard_date.strftime("%Y.%m.%d"):
+                print(x.find_element_by_class_name('title').text + '*}(' + x.find_element_by_xpath('./td[3]/span/span[3]').text + '.' + x.find_element_by_xpath('./td[3]/span/span[2]').text + '*}(' +' *}(' + x.find_element_by_tag_name('a').get_attribute('href'))
         else:
             break
 
@@ -433,13 +433,12 @@ def kstartup_scan(driver):
             # link - bi.net_url, kstartup_url 구분처리
             params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
             if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
-                link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[
-                    0] + "&registDate=" + params[1]
+                link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
             elif len(params) > 2:
                 link = board_url + params[2]
             else:
                 link = "링크오류"
-            print(title + '*}(' + link + '*}(' + date )
+            print(title + '*}( *}(' + date + '*}(' + link)
 
     # 페이지별 공지 가져오기
     boards_list2 = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[2]/li')
@@ -466,13 +465,12 @@ def kstartup_scan(driver):
                 #  bi.net_url, kstartup_url 구분처리
                 params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
                 if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
-                    link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + \
-                           params[0] + "&registDate=" + params[1]
+                    link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
                 elif len(params) > 2:
                     link = board_url + params[2]
                 else:
                     link = "링크오류"
-                print(title + '*}(' + link+ '*}(' + date )
+                print(title + '*}( *}(' + date + '*}(' + link)
             else:
                 flag = True
                 break
