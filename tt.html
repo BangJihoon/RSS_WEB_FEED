@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <link rel="shortcut icon" type="image⁄x-icon" href="https://bluevisor.kr/eng/img/main/main_v01_img.png">
+    <meta charset="utf-8">
+    <!-- bootstrap css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- datatables css,js -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <title>BlueVisor Board</title>
+</head>
+<body class="sub">
+    <div id="base">
+        <div class="container" style="text-align: center;">
+            <img src="https://media.rocketpunch.com/company/39769/ju-beulrubaijeo_cover_1513464273.jpg" align="center">
+            <h1 style="align-content:center">Today's posts</h1>
+            <table align = center class="table table-hover" id="sort">
+                <thead >
+                    <tr>
+                        <th> Site </th>
+                        <th> Title </th>
+                        <th> Start_Date </th>
+                        <th> End_date </th>
+                        <th> Save_date </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr height="50">
+                        <td data-table-header="Site">{{i.name}}</td>
+                        <td data-table-header="Title"><a href= {{i.link}} >{{i.title}}</a></td>
+                        <td data-table-header="Date">{{i.start_date}}</td>
+                        <td data-table-header="Due_date">{{i.end_date}}</td>
+                        <td data-table-header="Save_date">{{i.save_date}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+       $("#sort").DataTable({
+       });
+    });
+</script>
+</html>
