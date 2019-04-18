@@ -137,7 +137,7 @@ def kisa_scan():
             break
         else:
             mongo.post_save(name, title, link, date)
-            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n게시일: ' + date + '\n')
+            print('이름 : ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
 def nia_scan():
