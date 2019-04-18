@@ -23,10 +23,13 @@ else:
 # 13개 사이트 16개 정보저장
 
 sys.stdout = open('result.txt', 'w')
+date = datetime.now().strftime('%Y-%m-%d %H:%M')
+print(date + ' 실행결과\n\n')
 
 ''' 
 kotra, nipa, sba, kisa, nia, kdata, moel, bepa
 '''
+
 # 코트라
 sites.kotra_scan()
 
@@ -54,6 +57,11 @@ sites.bepa_scan()
 # 창업보육센터 네트워크시스템
 sites.bi_scan()
 
+# 창업진흥원
+sites.kised_scan()
+
+# 부산정보산업진흥원
+sites.busanit_scan()
 
 sys.stdout.close()
 
@@ -61,17 +69,10 @@ driver = webdriver.Chrome('C:/chromedriver', options=options)
 sys.stdout = open('output.txt', 'w')
 
 # 과학기술정보통신부
-sites.msit_scan(driver,standard_date)
-
-# 창업진흥원
-sites.kised_scan(driver,standard_date)
-
-# 부산정보산업진흥원
-sites.busanit_scan(driver, standard_date)
+sites.msit_scan(driver)
 
 # K-스타트업 (창업넷)
-sites.kstartup_scan(driver, standard_date)
-
+sites.kstartup_scan(driver)
 
 # 출력결과 저장
 sys.stdout.close()
@@ -91,6 +92,6 @@ gmail.sendmail()
 # 창닫기
 driver.close()
 
+# print("\n\n\n--------------------- 실행 완료 -------------------------\n\n\n")
 
-sys.exit()
-
+sys.exit(0)
