@@ -22,7 +22,8 @@ else:
 
 # 13개 사이트 16개 정보저장
 
-sys.stdout = open('result.txt', 'w')
+sys.stdout = open('result.txt', 'w',encoding='UTF8')
+
 date = datetime.now().strftime('%Y-%m-%d %H:%M')
 print(date + ' 실행결과\n\n')
 
@@ -69,7 +70,7 @@ driver = webdriver.Chrome('C:/chromedriver', options=options)
 sys.stdout = open('output.txt', 'w')
 
 # 과학기술정보통신부
-sites.msit_scan(driver, date)
+sites.msit_scan(driver, standard_date)
 
 # K-스타트업 (창업넷)
 sites.kstartup_scan(driver)
