@@ -69,7 +69,7 @@ driver = webdriver.Chrome('C:/chromedriver', options=options)
 sys.stdout = open('output.txt', 'w')
 
 # 과학기술정보통신부
-sites.msit_scan(driver)
+sites.msit_scan(driver, date)
 
 # K-스타트업 (창업넷)
 sites.kstartup_scan(driver)
