@@ -12,14 +12,6 @@ options = Options()
 options.add_argument('--kiosk')
 # options.add_argument('headless')    # 창이 안보이게 돌리기
 
-# 2일전 기준날짜 (월요일은 주말 포함 3일)
-date = datetime.today().weekday()
-if date:
-    standard_date = datetime.today() - timedelta(2)
-else:
-    # 0이면 월요일, false 이므로, 주말포함 3일전공고
-    standard_date = datetime.today() - timedelta(3)
-
 # 13개 사이트 16개 정보저장
 
 sys.stdout = open('result.txt', 'w',encoding='UTF8')
@@ -70,7 +62,7 @@ driver = webdriver.Chrome('C:/chromedriver', options=options)
 sys.stdout = open('output.txt', 'w')
 
 # 과학기술정보통신부
-sites.msit_scan(driver, standard_date)
+sites.msit_scan(driver)
 
 # K-스타트업 (창업넷)
 sites.kstartup_scan(driver)
