@@ -373,7 +373,6 @@ def busanit_scan():
 
 def msit_scan(driver):
     name = '과학기술정보통신부'
-    print(name)
 
     # 과학기술정보통신부 신청사업 url
     url = 'https://msit.go.kr/web/msipContents/contents.do?mId=MTE5'
@@ -404,7 +403,6 @@ def msit_scan(driver):
 
 def kstartup_scan(driver):
     name = 'kstartup'
-    print(name)
 
     # k- startup 신청게시판 url
     url = 'http://www.k-startup.go.kr/common/announcement/announcementList.do?mid=30004&bid=701&searchAppAt=A'
