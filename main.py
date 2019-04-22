@@ -71,20 +71,10 @@ sys.stdout.close()
 # 출력결과 저장
 sys.stdout.close()
 
-# 결과물 DB 저장
-#mongo.store()
-
 # 디비 닫기
 mongo.close()
 
-# file 저장
-#mongo.result()
-
 # file 내용 메일 보내기
 message.sendmail()
-
-# slack 메시지 보내기
-#slack.slack_message()
-
 
 sys.exit(0)
