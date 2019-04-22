@@ -392,8 +392,12 @@ def msit_scan(driver):
     mongo.check_point_save(name, boards_list[0].find_element_by_class_name('title').text)
 
     for x in boards_list:
-        if check_point != x.find_element_by_class_name('title').text:
-            print(x.find_element_by_class_name('title').text + '*}(' + x.find_element_by_xpath('./td[3]/span/span[3]').text + '.' + x.find_element_by_xpath('./td[3]/span/span[2]').text + '*}(' +' *}(' + x.find_element_by_tag_name('a').get_attribute('href'))
+        title = x.find_element_by_class_name('title').text
+        if check_point != title:
+            date = '20'+x.find_element_by_xpath('./td[3]/span/span[3]').text + '.' + x.find_element_by_xpath('./td[3]/span/span[2]').text
+            link = x.find_element_by_tag_name('a').get_attribute('href')
+            mongo.post_save(name, title, link, date,'')
+            print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
         else:
             break
 
@@ -437,7 +441,8 @@ def kstartup_scan(driver):
                 link = board_url + params[2]
             else:
                 link = "링크오류"
-            print(title + '*}( *}(' + date + '*}(' + link)
+            mongo.post_save(name, title, link, '', date)
+            print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
 
     # 페이지별 공지 가져오기
     boards_list2 = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[2]/li')
@@ -469,7 +474,8 @@ def kstartup_scan(driver):
                     link = board_url + params[2]
                 else:
                     link = "링크오류"
-                print(title + '*}( *}(' + date + '*}(' + link)
+                mongo.post_save(name, title, link, '', date)
+                print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
             else:
                 flag = True
                 break
