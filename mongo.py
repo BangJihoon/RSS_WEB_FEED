@@ -6,7 +6,6 @@ db = conn.get_database('bluevisor')
 
 date = datetime.now().strftime('%Y-%m-%d')
 
-standard_date = datetime.today() - timedelta(3)
 
 def check_point_save(name, title):
     collection = db.get_collection('check_point')
