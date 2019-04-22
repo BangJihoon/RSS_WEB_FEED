@@ -10,7 +10,7 @@ def mongoTest():
     collection = db.get_collection('posts')
     results = collection.find()
     client.close()
-    return render_template('tt.html', data=results)
+    return render_template('post.html', data=results)
 
 
 if __name__ == '__main__':
