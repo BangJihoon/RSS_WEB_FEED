@@ -2,7 +2,7 @@ from selenium import webdriver
 from datetime import datetime, timedelta
 from selenium.webdriver.chrome.options import Options
 import sites
-import mongo, gmail
+import mongo, message
 import sys
 
 # 크롬드라이버의 추가 옵션을 설정하는 함수
@@ -12,12 +12,22 @@ options = Options()
 options.add_argument('--kiosk')
 # options.add_argument('headless')    # 창이 안보이게 돌리기
 
-# 13개 사이트 16개 정보저장
+driver = webdriver.Chrome('C:/chromedriver', options=options)
 
+# 13개 사이트 16개 정보저장
 sys.stdout = open('result.txt', 'w',encoding='UTF8')
 
 date = datetime.now().strftime('%Y-%m-%d %H:%M')
 print(date + ' 실행결과\n\n')
+
+# 과학기술정보통신부
+sites.msit_scan(driver)
+
+# K-스타트업 (창업넷)
+sites.kstartup_scan(driver)
+
+# 창닫기
+driver.close()
 
 ''' 
 kotra, nipa, sba, kisa, nia, kdata, moel, bepa
@@ -58,33 +68,23 @@ sites.busanit_scan()
 
 sys.stdout.close()
 
-driver = webdriver.Chrome('C:/chromedriver', options=options)
-sys.stdout = open('output.txt', 'w')
-
-# 과학기술정보통신부
-sites.msit_scan(driver)
-
-# K-스타트업 (창업넷)
-sites.kstartup_scan(driver)
-
 # 출력결과 저장
 sys.stdout.close()
 
 # 결과물 DB 저장
-mongo.store()
+#mongo.store()
 
 # 디비 닫기
 mongo.close()
 
 # file 저장
-mongo.result()
+#mongo.result()
 
 # file 내용 메일 보내기
-gmail.sendmail()
+message.sendmail()
 
-# 창닫기
-driver.close()
+# slack 메시지 보내기
+#slack.slack_message()
 
-# print("\n\n\n--------------------- 실행 완료 -------------------------\n\n\n")
 
 sys.exit(0)
