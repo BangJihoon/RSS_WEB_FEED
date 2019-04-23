@@ -41,7 +41,10 @@ def is_saved(title):
     return collection.find_one({"title": title})
 
 
+def count():
+    collection = db.get_collection('posts')
+    return collection.find({"save_date": date}).count()
+
+
 def close():
     conn.close()
-
-
