@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from datetime import datetime
 from slacker import Slacker
 import websocket
+import mongo
 
 
 date = datetime.now().strftime('%Y-%m-%d %H:%M')
@@ -37,4 +38,11 @@ def sendmail():
     # slack 메세지 보내기
     token = "xoxp-612642071956-615359344966-615029538087-b59ddaae7800a83383d9c7f37b40ae3c"
     slack = Slacker(token)
-    slack.chat.post_message("#todays-posts",contents)
+    
+    num = mongo.count()
+    if num:
+        slack.chat.post_message("#todays-posts", ("새로운 공고문이 " + str(num) + "개 올라왔습니다."))
+    else:
+        slack.chat.post_message("#todays-posts", "새로운 공고문이 없습니다.")
+    
+    #slack.chat.post_message("#todays-posts",contents)
