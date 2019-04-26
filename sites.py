@@ -401,6 +401,7 @@ def msit_scan(driver):
             break
 
 
+
 def kstartup_scan(driver):
     name = 'kstartup'
 
@@ -415,71 +416,77 @@ def kstartup_scan(driver):
     driver.find_element_by_tag_name('body').send_keys(Keys.END)
     time.sleep(2)
 
-    # 중요 공지 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[1]/li')
-
-    # 중요공지는 10개내외로 순차적이지않으므로, 제목을 비교하여 이전에것들을 제외시킨다.
-    count=0
-    for x in boards_list:
-        # 제목
-        title = x.find_element_by_tag_name('a').text
-        if mongo.is_saved(title) is False:
-            # 날짜 -  있는것과 없는것 구분처리
-            try:
-                due_date = re.findall("\d{4}-\d{2}-\d{2}", x.find_element_by_xpath('./ul/li[3]').text)
-                date = due_date[0]
-            except Exception:
-                date = "상시모집"
-
-            # link - bi.net_url, kstartup_url 구분처리
-            params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
-            if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
-                link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
-            elif len(params) > 2:
-                link = board_url + params[2]
-            else:
-                link = "링크오류"
-            mongo.post_save(name, title, link, '', date)
-            print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
-
-    # 페이지별 공지 가져오기
-    boards_list2 = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[2]/li')
-
-    # 기준이될 point  저장
-    mongo.check_point_save(name, boards_list2[0].find_element_by_tag_name('a').text)
-
-    # 지난번 저장했던 포스트 가져오기
-    check_point = mongo.check_point_read(name)['title']
 
     pageCount = 1
     flag = False
     while pageCount < 10 and flag is False:
-        for x in boards_list2:
-            title = x.find_element_by_tag_name('a').text
-            if check_point != title:
-                # 날짜 있는것과 없는것 구분처리
-                try:
-                    due_date = re.findall("\d{4}-\d{2}-\d{2}", x.find_element_by_xpath('./ul/li[3]').text)
-                    date = due_date[0]
-                except Exception:
-                    date = "상시모집"
 
-                #  bi.net_url, kstartup_url 구분처리
-                params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
-                if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
-                    link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
-                elif len(params) > 2:
-                    link = board_url + params[2]
+        # 페이지에 중요공지가 있을수도있고, 없을수도 있으니 try
+        try:
+            # 중요 공지 가져오기
+            impo_board = driver.find_element_by_class_name('ann_list_impor')
+            boards_list = impo_board.find_elements_by_xpath('./li')
+
+            # 중요공지는 10개내외로 순차적이지않으므로, 제목을 비교하여 이전에것들을 제외시킨다.
+            for x in boards_list:
+                # 제목
+                title = x.find_element_by_tag_name('a').text
+                if mongo.is_saved(title) is False:
+                    # 날짜 -  있는것과 없는것 구분처리
+                    try:
+                        due_date = re.findall("\d{4}-\d{2}-\d{2}", x.find_element_by_xpath('./ul/li[3]').text)
+                        date = due_date[0]
+                    except Exception:
+                        date = "상시모집"
+
+                    # link - bi.net_url, kstartup_url 구분처리
+                    params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
+                    if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
+                        link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
+                    elif len(params) > 2:
+                        link = board_url + params[2]
+                    else:
+                        link = "링크오류"
+                    mongo.post_save(name, title, link, '', date)
+                    print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
+        except Exception:
+            pass
+
+        try:
+            # 페이지별 공지 가져오기
+            ann_board = driver.find_element_by_class_name('ann_list')
+            boards_list2 = ann_board.find_elements_by_xpath('./li')
+            # 지난번 저장했던 포스트 가져오기
+            check_point = mongo.check_point_read(name)['title']
+            mongo.check_point_save(name, boards_list2[0].find_element_by_tag_name('a').text)
+
+            for x in boards_list2:
+                title = x.find_element_by_tag_name('a').text
+                if check_point != title:
+                    # 날짜 있는것과 없는것 구분처리
+                    try:
+                        due_date = re.findall("\d{4}-\d{2}-\d{2}", x.find_element_by_xpath('./ul/li[3]').text)
+                        date = due_date[0]
+                    except Exception:
+                        date = "상시모집"
+
+                    #  bi.net_url, kstartup_url 구분처리
+                    params = re.findall("\d+", x.find_element_by_tag_name('a').get_attribute('href'))
+                    if len(params) == 2:  # bi-net 이동하는 함수일때, 파라미터가 2개임
+                        link = "http://www.bi.go.kr/board/editView.do?boardVO.viewFlag=view&boardID=NOTICE&postSeq=" + params[0] + "&registDate=" + params[1]
+                    elif len(params) > 2:
+                        link = board_url + params[2]
+                    else:
+                        link = "링크오류"
+                    mongo.post_save(name, title, link, '', date)
+                    print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
                 else:
-                    link = "링크오류"
-                mongo.post_save(name, title, link, '', date)
-                print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n마감일: ' + date + '\n')
-            else:
-                flag = True
-                break
+                    flag = True
+                    break
+        except Exception:
+            pass
 
         # 페이지 이동
-        driver.find_element_by_xpath(
-            '// *[ @ id = "searchAnnouncementVO"] / div[2] / div[4] / a[' + str(pageCount) + ']').click()
-        boards_list2 = driver.find_elements_by_xpath('//*[@id="searchAnnouncementVO"]/div[2]/div[3]/ul[1]/li')
+        driver.find_element_by_xpath('// *[ @ id = "searchAnnouncementVO"] / div[2] / div[4] / a[' + str(pageCount) + ']').click()
         pageCount += 1
+
