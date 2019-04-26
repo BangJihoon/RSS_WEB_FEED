@@ -29,7 +29,7 @@ def kotra_scan():
     dates = soup.select('tr > td:nth-child(3)')
 
     # 체크포인트 불러오기, 저장하기
-    check_point = mongo.check_point_read(name)['title']
+    check_point_date = mongo.check_point_read(name)['save_date']
     mongo.check_point_save(name, titles[0].text)
 
     # 데이터 변수로 받아서 txt 저장
@@ -39,9 +39,9 @@ def kotra_scan():
         date = dates[i].text
         sdate = date.split(" ~ ").pop(0)
         edate = date.split(" ~ ").pop(1)
-
-        if check_point == title:
-            break
+       
+        if check_point_date >= sdate:
+            continue
         else:
             mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
