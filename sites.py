@@ -883,6 +883,7 @@ def btp_scan():
         soup = BeautifulSoup(html, 'html.parser')
 
         # selector 로 데이터가저오기
+        top_index = soup.select('span.notice')
         titles = soup.select('td.ui-pleft20 > a')
         if j == 0:
             dates = soup.select('tr > td:nth-child(3)')
@@ -891,7 +892,7 @@ def btp_scan():
 
         # 체크포인트 불러오기, 저장하기
         check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[0].text.strip())
+        mongo.check_point_save(names[j], titles[len(top_index)].text.strip())
 
         # 데이터 변수로 받아서 txt 저장
         for i in range(len(titles)):
