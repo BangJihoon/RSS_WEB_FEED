@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 
 conn = pymongo.MongoClient('mongodb+srv://bang:bang@cluster0-uiqcf.mongodb.net/test?retryWrites=true')
 db = conn.get_database('bluevisor')
-
 date = datetime.now().strftime('%Y-%m-%d')
 
 
@@ -32,6 +31,13 @@ def post_save(name, title, link, sdate, edate):
 
 def check_point_read(name):
     collection = db.get_collection('check_point')
+    if collection.find_one({"name": name}) is None:
+        post = {
+            "name": name,
+            "title": '',
+            "save_date": date
+        }
+        collection.update({"name": name}, post, upsert=True)
     return collection.find_one({"name": name})
     # return collection.find({"date": date})
 
@@ -48,3 +54,4 @@ def count():
 
 def close():
     conn.close()
+
