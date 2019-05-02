@@ -48,7 +48,9 @@ sites.ccei_scan(driver)
 driver.close()
 
 # ----------------- 정적인 웹 크롤링 ---------------------------
-
+''' 
+kotra, nipa, sba, kisa, nia, kdata, moel, bepa
+'''
 
 # 코트라
 sites.kotra_scan()
@@ -124,7 +126,7 @@ sys.stdout.close()
 # 디비 닫기
 mongo.close()
 
-# file 내용 메일 보내기
-message.sendmail()
+# file 내용 push
+message.telegram_push()
 
 sys.exit(0)
