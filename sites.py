@@ -895,9 +895,12 @@ def btp_scan():
             else:
                 break
 
+
 def sbsc_scan():
+    # 서울기업지원센터
+
     # 서울시 지원사업
-    name = '서울시_지원사업'
+    name = '서울시 지원사업'
     urls = ['https://sbsc.seoul.go.kr/fe/support/seoul/NR_view.do?bbsCd=1&bbsSeq=','&currentPage=1&searchVals=&bbsGrpCds_all=on&orgCd=']
     req = requests.get('https://sbsc.seoul.go.kr/fe/support/seoul/NR_list.do?bbsCd=1')
     html = req.text
@@ -927,7 +930,7 @@ def sbsc_scan():
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + sdate + ' ~ ' + edate +'\n')
 
     # 중앙정부 지원사업
-    name = '중앙정부_지원사업'
+    name = '중앙정부 지원사업'
     req = requests.get('https://sbsc.seoul.go.kr/fe/support/bizinfo/NR_list.do')
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
@@ -945,6 +948,7 @@ def sbsc_scan():
         title = titles[i].text.strip()
         link = titles[i].get('href').strip()
         date = dates[i].text.strip()
+
         if check_point == title:
             break
         else:
@@ -965,46 +969,31 @@ def mss_scan():
         soup = BeautifulSoup(html, 'html.parser')
 
         # selector 로 데이터가저오기
-        titles = soup.select('td > a')
+        titles = soup.select('td.subject > a')
         dates = soup.select('tr > td:nth-child(5)')
         fixed = soup.select('td.num')
 
         # 체크포인트 불러오기, 저장하기
         check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[0].text.strip())
 
         # 데이터 변수로 받아서 txt 저장
-        k = 0
+        k = 0  # check point 설정 변수
         for i in range(len(titles)):
-            if (i == 0):
+            if (j == 0):  # 공지사항에서만
                 if (fixed[i].text.strip() == ''):       # 글번호가 아니면 다음글로 넘김
                     k += 1
                     continue
             title = titles[i].text.strip()
-            if (title == ''):       # title, link 값 중에 공백 존재
-                continue
             seq = re.findall("\d+", titles[i].get('onclick'))
             link = uris[0] + seq[0] + uris[1] + seq[1] + uris[2] + seq[1] + uris[j+3]
-            date = dates[k].text
-            k += 1
+            date = dates[i].text
 
             if check_point == title:
                 break
             else:
                 mongo.post_save(names[j], title, link, date, '')
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+        mongo.check_point_save(names[j], titles[k].text.strip())
 
 
 
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-# 크롬드라이버의 추가 옵션을 설정하는 함수
-options = Options()
-
-# chrome 에서 F11을 눌러 전체 화면으로 넓히는 옵션 --kiosk , --start-fullscreen
-options.add_argument('--kiosk')
-# options.add_argument('headless')    # 창이 안보이게 돌리기
-
-driver = webdriver.Chrome('C:/chromedriver', options=options)
-
-kstartup_scan(driver)
