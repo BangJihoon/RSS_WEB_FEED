@@ -958,7 +958,7 @@ def sbsc_scan():
 
 def mss_scan():
     # 중소벤처기업부
-    names = ['중소벤처기업부1', '중소벤처기업부2']
+    names = ['중소벤처기업부_공지사항', '중소벤처기업부_']
     uris = ['https://www.mss.go.kr/site/smba/ex/bbs/View.do?cbIdx=', '&bcIdx=', '&parentSeq=',  ' ', '&searchRltnYn=A']
     urls = ['https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=81', 'https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=126&searchRltnYn=A']
 
