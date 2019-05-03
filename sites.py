@@ -18,7 +18,6 @@ today = datetime.now()
     ccei
 '''
 
-
 def msit_scan(driver):
     name = '과학기술정보통신부'
 
@@ -59,6 +58,7 @@ def kstartup_scan(driver):
 
     # 드라이버로 웹 열기
     driver.get(url)
+    time.sleep(2)
 
     # 페이지 다운버튼 누르기
     driver.find_element_by_tag_name('body').send_keys(Keys.END)
@@ -175,9 +175,8 @@ def seoul_scan(driver):
 
 def venture_scan(driver):
     # 벤처기업협회
-    names = ['벤처기업협회_사업공고', '벤처기업협회_입찰공고']
-    urls = ['https://www.venture.or.kr/#/home/bizNotice/h020101', 'https://www.venture.or.kr/#/home/bizNotice/h0206/']
-
+    names = ['벤처기업협회_사업공고']
+    urls = ['https://www.venture.or.kr/#/home/bizNotice/h020101']
     # 벤처기업협회_사업공고
     driver.get(urls[0])
     time.sleep(2)       # 반드시 필요함
@@ -190,7 +189,7 @@ def venture_scan(driver):
     for x in boards_list:
         title = x.find_element_by_tag_name('a').text
         if check_point != title:
-            link = 'https://www.venture.or.kr/' + x.find_element_by_tag_name('a').get_attribute('href')
+            link = x.find_element_by_tag_name('a').get_attribute('href')
             date = x.find_element_by_css_selector('dd.info > span:nth-child(1)').text
             try:
                 sdate = date.split(" ~ ").pop(0)
@@ -200,34 +199,7 @@ def venture_scan(driver):
                 edate = ''
 
             mongo.post_save(names[0], title, link, sdate,edate)
-            print('이름: ' + names[0] + '\n제목:' + title + '\n링크: ' + link + '\n시작일: ' + sdate + '\n마감일: '+edate+ '\n')
-        else:
-            break
-
-    # 벤처기업협회_입찰공고
-    driver.get(urls[1])
-    time.sleep(2)       # 반드시 필요함
-
-    # 공지목록 가져오기
-    boards_list = driver.find_elements_by_xpath('//*[@id="contents"]/ui-view/div/div[2]/div[3]/div[3]/table/tbody')
-    check_point = mongo.check_point_read(names[1])['title']
-    mongo.check_point_save(names[1], boards_list[0].find_element_by_class_name('al').text)
-
-    for x in boards_list:
-        title = x.find_element_by_class_name('al').text
-        if check_point != title:
-            link = 'https://www.venture.or.kr/' + x.find_element_by_tag_name('tr').get_attribute('href')
-            date = x.find_element_by_css_selector('tr > td:nth-child(3) ').text
-
-            try:
-                sdate = date.split(" ~ ").pop(0)
-                edate = date.split(" ~ ").pop(1)
-            except Exception: # 상시모집인 경우
-                sdate = date
-                edate = ''
-
-            mongo.post_save(names[1], title, link, sdate, edate)
-            print('이름: ' + names[1] + '\n제목:' + title + '\n링크: ' + link + '\n날짜: ' + date + '\n')
+            print('이름: ' + names[0] + '\n제목:' + title + '\n링크: ' + link + '\n날짜: ' + date + '\n')
         else:
             break
 
@@ -285,7 +257,7 @@ def kotra_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point_date = mongo.check_point_read(name)['save_date']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -664,7 +636,7 @@ def seoulstartuphub_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -672,7 +644,9 @@ def seoulstartuphub_scan():
         link = titles[i].get('href').strip()
         date = dates[i].text
         sdate = date.split(" ~ ").pop(0)
+        sdate = sdate[0:4] + '.' + sdate[4:6] + '.' + sdate[6:8]
         edate = date.split(" ~ ").pop(1)
+        edate = edate[0:4] + '.' + edate[4:6] + '.' + edate[6:8]
 
         if check_point == title:
             break
@@ -680,6 +654,7 @@ def seoulstartuphub_scan():
             mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
+seoulstartuphub_scan()
 
 def koita_scan():
     # 한국산업진흥협회
@@ -735,7 +710,7 @@ def kisdi_scan():
     # 체크포인트 불러오기, 저장하기
     mongo.check_point_read(name)
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -788,7 +763,8 @@ def kai_scan():
             if mongo.is_saved(title) is None:
                 mongo.post_save(name, title, link, sdate, edate)
                 print('이름: ' + name + '\n제목:' + title + '\n링크: ' + link + '\n날짜: ' + date + '\n')
-
+        else:
+            break
 
 def busan_scan():
     # 부산광역시 사이트
@@ -805,7 +781,7 @@ def busan_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -815,10 +791,10 @@ def busan_scan():
             date = dates[i].text.strip()
             mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
-
+        else:
+            break
 
 def koraia_scan():
-    # 한국인공지능협회
     name = '한국인공지능협회'
 
     # 신청가능 사업 공지
@@ -833,7 +809,7 @@ def koraia_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -843,6 +819,8 @@ def koraia_scan():
             date = dates[i].text
             mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+        else:
+            break
 
 
 def ideamaru_scan():
@@ -858,7 +836,7 @@ def ideamaru_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -869,6 +847,8 @@ def ideamaru_scan():
             date = dates[i].text
             mongo.post_save(name, title, link, date, '')
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
+        else:
+            break
 
 
 def btp_scan():
@@ -887,7 +867,7 @@ def btp_scan():
         titles = soup.select('td.ui-pleft20 > a')
         if j == 0:
             dates = soup.select('tr > td:nth-child(3)')
-        elif j == 1:
+        else:
             dates = soup.select('tr > td:nth-child(4)')
 
         # 체크포인트 불러오기, 저장하기
@@ -906,20 +886,18 @@ def btp_scan():
                     edate = date.split("~").pop(1)
                 # 형식이 다른경우
                 except Exception:
-                    sdate = date
-                    edate = ''
-
+                    sdate = ''
+                    edate = date
                 # 상단고정 공지때문에 저장된건 중복 걸러주기
                 if mongo.is_saved(title) is None:
                     mongo.post_save(names[j], title, link, sdate, edate)
                     print('이름: ' + names[j]+ '\n제목:' + title + '\n링크: ' + link + '\n날짜: ' + sdate + edate + '\n')
-
+            else:
+                break
 
 def sbsc_scan():
-    # 서울기업지원센터
-
     # 서울시 지원사업
-    name = '서울기업지원센터1'
+    name = '서울시_지원사업'
     urls = ['https://sbsc.seoul.go.kr/fe/support/seoul/NR_view.do?bbsCd=1&bbsSeq=','&currentPage=1&searchVals=&bbsGrpCds_all=on&orgCd=']
     req = requests.get('https://sbsc.seoul.go.kr/fe/support/seoul/NR_list.do?bbsCd=1')
     html = req.text
@@ -931,7 +909,7 @@ def sbsc_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
@@ -949,7 +927,7 @@ def sbsc_scan():
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + sdate + ' ~ ' + edate +'\n')
 
     # 중앙정부 지원사업
-    name = '서울기업지원센터2'
+    name = '중앙정부_지원사업'
     req = requests.get('https://sbsc.seoul.go.kr/fe/support/bizinfo/NR_list.do')
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
@@ -960,14 +938,13 @@ def sbsc_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
         title = titles[i].text.strip()
         link = titles[i].get('href').strip()
         date = dates[i].text.strip()
-        print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
         if check_point == title:
             break
         else:
@@ -994,7 +971,7 @@ def mss_scan():
 
         # 체크포인트 불러오기, 저장하기
         check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[0].text)
+        mongo.check_point_save(names[j], titles[0].text.strip())
 
         # 데이터 변수로 받아서 txt 저장
         k = 0
@@ -1018,3 +995,16 @@ def mss_scan():
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
 
+
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+# 크롬드라이버의 추가 옵션을 설정하는 함수
+options = Options()
+
+# chrome 에서 F11을 눌러 전체 화면으로 넓히는 옵션 --kiosk , --start-fullscreen
+options.add_argument('--kiosk')
+# options.add_argument('headless')    # 창이 안보이게 돌리기
+
+driver = webdriver.Chrome('C:/chromedriver', options=options)
+
+kstartup_scan(driver)
