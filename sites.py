@@ -234,7 +234,6 @@ def ccei_scan(driver):
         else:
             break
 
-
 # ----------------- 정적인 웹 크롤링 ---------------------------
 ''' 
 kotra, nipa, sba, kisa, nia, kdata, moel, bepa
@@ -547,11 +546,11 @@ def kised_scan():
 
     # 체크포인트 불러오기, 저장하기
     check_point = mongo.check_point_read(name)['title']
-    mongo.check_point_save(name, titles[0].text)
+    mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
-        title = titles[i].text
+        title = titles[i].text.strip()
         link = titles[i].get('href')
         date = dates[i].text
         if check_point == title:
@@ -579,11 +578,11 @@ def busanit_scan():
 
         # 체크포인트 불러오기, 저장하기
         check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[0].text)
+        mongo.check_point_save(names[j], titles[0].text.strip())
 
         # 데이터 변수로 받아서 txt 저장
         for i in range(len(titles)):
-            title = titles[i].text
+            title = titles[i].text.strip()
             link = 'http://busanit.or.kr/board/' + titles[i].get('href')
             date = dates[i].text
             if check_point == title:
@@ -640,7 +639,7 @@ def seoulstartuphub_scan():
 
     # 데이터 변수로 받아서 txt 저장
     for i in range(len(titles)):
-        title = titles[i].text
+        title = titles[i].text.strip()
         link = titles[i].get('href').strip()
         date = dates[i].text
         sdate = date.split(" ~ ").pop(0)
@@ -654,7 +653,6 @@ def seoulstartuphub_scan():
             mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
-seoulstartuphub_scan()
 
 def koita_scan():
     # 한국산업진흥협회
@@ -677,9 +675,8 @@ def koita_scan():
         dates = soup.select('tr > td:nth-child(5)')
 
         # 체크포인트 불러오기, 저장하기
-        mongo.check_point_read(names)
         check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[0].text)
+        mongo.check_point_save(names[j], titles[0].text.strip())
 
         # 데이터 변수로 받아서 txt 저장
         for i in range(len(titles)):
@@ -793,6 +790,7 @@ def busan_scan():
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
         else:
             break
+
 
 def koraia_scan():
     name = '한국인공지능협회'
@@ -958,7 +956,7 @@ def sbsc_scan():
 
 def mss_scan():
     # 중소벤처기업부
-    names = ['중소벤처기업부_공지사항', '중소벤처기업부_']
+    names = ['중소벤처기업부_공지사항', '중소벤처기업부_사업공고']
     uris = ['https://www.mss.go.kr/site/smba/ex/bbs/View.do?cbIdx=', '&bcIdx=', '&parentSeq=',  ' ', '&searchRltnYn=A']
     urls = ['https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=81', 'https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=126&searchRltnYn=A']
 
@@ -993,7 +991,7 @@ def mss_scan():
             else:
                 mongo.post_save(names[j], title, link, date, '')
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
-        mongo.check_point_save(names[j], titles[k].text.strip())
 
+        mongo.check_point_save(names[j], titles[k].text.strip())
 
 
