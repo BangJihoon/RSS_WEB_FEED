@@ -255,7 +255,6 @@ def kotra_scan():
     dates = soup.select('tr > td:nth-child(3)')
 
     # 체크포인트 불러오기, 저장하기
-    check_point_date = mongo.check_point_read(name)['save_date']
     mongo.check_point_save(name, titles[0].text.strip())
 
     # 데이터 변수로 받아서 txt 저장
@@ -263,12 +262,14 @@ def kotra_scan():
         title = titles[i].text
         link = url + titles[i].get('href').split('\'').pop(1)
         date = dates[i].text
-        sdate = date.split(" ~ ").pop(0)
-        edate = date.split(" ~ ").pop(1)
+        try:
+            sdate = date.split(" ~ ").pop(0)
+            edate = date.split(" ~ ").pop(1)
+        except Exception:  # 상시모집인 경우
+            sdate = date
+            edate = ''
 
-        if check_point_date >= sdate:
-            continue
-        else:
+        if mongo.is_saved(title) is None:
             mongo.post_save(name, title, link, sdate, edate)
             print('이름: ' + name + '\n제목: ' + title + '\n링크: ' + link + '\n신청기간: ' + date + '\n')
 
@@ -520,8 +521,12 @@ def bi_scan():
         params = re.findall("\d+", titles[i].get('href'))
         link = url[0] + params[0] + url[1] + params[1] + url[2]
         date = dates[i].text
-        sdate = date.split(" ~ ").pop(0)
-        edate = date.split(" ~ ").pop(1)
+        try:
+            sdate = date.split(" ~ ").pop(0)
+            edate = date.split(" ~ ").pop(1)
+        except Exception:  # 상시모집인 경우
+            sdate = date
+            edate = ''
 
         if check_point == title:
             break
@@ -642,9 +647,14 @@ def seoulstartuphub_scan():
         title = titles[i].text.strip()
         link = titles[i].get('href').strip()
         date = dates[i].text
-        sdate = date.split(" ~ ").pop(0)
+        try:
+            sdate = date.split(" ~ ").pop(0)
+            edate = date.split(" ~ ").pop(1)
+        except Exception:  # 상시모집인 경우
+            sdate = date
+            edate = ''
+
         sdate = sdate[0:4] + '.' + sdate[4:6] + '.' + sdate[6:8]
-        edate = date.split(" ~ ").pop(1)
         edate = edate[0:4] + '.' + edate[4:6] + '.' + edate[6:8]
 
         if check_point == title:
@@ -750,8 +760,8 @@ def kai_scan():
             link = 'http://www.k-ai.or.kr' + titles[i].get('href')
             date = dates[i].text
             try:
-                sdate = date.split("~").pop(0)
                 edate = date.split("~").pop(1)
+                sdate = date.split("~").pop(0)
             # 형식이 다른경우
             except Exception:
                 sdate = date
@@ -880,8 +890,8 @@ def btp_scan():
                 link = urls[j] + '&command=View&idx=' + param[0]
                 date = dates[i].text.split("(").pop(0).strip()
                 try:
-                    sdate = date.split("~").pop(0)
                     edate = date.split("~").pop(1)
+                    sdate = date.split("~").pop(0)
                 # 형식이 다른경우
                 except Exception:
                     sdate = ''
