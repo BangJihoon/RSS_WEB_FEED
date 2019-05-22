@@ -145,10 +145,10 @@ def kstartup_scan(driver):
 
 
 def seoul_scan(driver):
-    names = ['서울특별시_입찰공고', '서울특별시_고시공고']
-    urls = ['http://www.seoul.go.kr/news/news_tender.do', 'http://www.seoul.go.kr/news/news_notice.do']
+    names = ['서울특별시_고시공고']
+    urls = ['http://www.seoul.go.kr/news/news_notice.do']
 
-    for i in range(2):
+    for i in range(1):
         # 드라이버로 웹 열기
         driver.get(urls[i])
         time.sleep(2)
@@ -302,9 +302,7 @@ def nipa_scan():
             link = url + uris[j] + titles[i].get('onclick').split('\'').pop(1)
             date = dates[i].text
 
-            if check_point == title:
-                break
-            else:
+            if mongo.is_saved(title) is None:
                 mongo.post_save(names[j], title, link, date, '')
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
@@ -438,7 +436,7 @@ def moel_scan():
     name = '고용노동부'
     url = 'http://www.moel.go.kr'
     # 신청가능 사업 공지
-    req = requests.get('http://www.moel.go.kr/info/govsupport/govsupportsub/govSupportSubList.do')
+    req = requests.get('http://www.moel.go.kr/news/notice/noticeList.do')
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -864,44 +862,36 @@ def btp_scan():
     urls = ['http://www.btp.or.kr/index.php?action=BD0000M&pagecode=P000000010&language=KR',
             'http://www.btp.or.kr/index.php?action=BD0000M&pagecode=P000000013&language=KR']
     for j in range(2):
-        # 신청가능 사업 공지
-        req = requests.get(urls[j])
-        req.encoding = 'utf-8'
-        html = req.text
-        soup = BeautifulSoup(html, 'html.parser')
+        for pageindex in range(1, 3):       # 1-2페이지까지 돌림
+            # 신청가능 사업 공지
+            req = requests.get(urls[j]+"&pageIndex="+str(pageindex))
+            req.encoding = 'utf-8'
+            html = req.text
+            soup = BeautifulSoup(html, 'html.parser')
 
-        # selector 로 데이터가저오기
-        top_index = soup.select('span.notice')
-        titles = soup.select('td.ui-pleft20 > a')
-        if j == 0:
-            dates = soup.select('tr > td:nth-child(3)')
-        else:
-            dates = soup.select('tr > td:nth-child(4)')
-
-        # 체크포인트 불러오기, 저장하기
-        check_point = mongo.check_point_read(names[j])['title']
-        mongo.check_point_save(names[j], titles[len(top_index)].text.strip())
-
-        # 데이터 변수로 받아서 txt 저장
-        for i in range(len(titles)):
-            title = titles[i].text.strip()
-            if check_point != title:
-                param = re.findall("\d+", titles[i].get('href'))
-                link = urls[j] + '&command=View&idx=' + param[0]
-                date = dates[i].text.split("(").pop(0).strip()
-                try:
-                    edate = date.split("~").pop(1)
-                    sdate = date.split("~").pop(0)
-                # 형식이 다른경우
-                except Exception:
-                    sdate = ''
-                    edate = date
-                # 상단고정 공지때문에 저장된건 중복 걸러주기
+            # selector 로 데이터가저오기
+            titles = soup.select(' tr > td.ui-pleft20 > a')
+            if j == 0:
+                dates = soup.select('tr > td:nth-child(3)')
+            else:
+                dates = soup.select('tr > td:nth-child(4)')
+            # 데이터 변수로 받아서 txt 저장
+            for i in range(len(titles)):
+                title = titles[i].text.strip()
                 if mongo.is_saved(title) is None:
+                    param = re.findall("\d+", titles[i].get('href'))
+                    link = urls[j] + '&command=View&idx=' + param[0]
+                    date = dates[i].text.split("(").pop(0).strip()
+                    try:
+                        edate = date.split("~").pop(1)
+                        sdate = date.split("~").pop(0)
+                    # 형식이 다른경우
+                    except Exception:
+                        sdate = ''
+                        edate = date
+                    # 상단고정 공지때문에 저장된건 중복 걸러주기
                     mongo.post_save(names[j], title, link, sdate, edate)
                     print('이름: ' + names[j]+ '\n제목:' + title + '\n링크: ' + link + '\n날짜: ' + sdate + edate + '\n')
-            else:
-                break
 
 
 def sbsc_scan():
@@ -1003,5 +993,4 @@ def mss_scan():
                 print('이름: ' + names[j] + '\n제목: ' + title + '\n링크: ' + link + '\n등록일: ' + date + '\n')
 
         mongo.check_point_save(names[j], titles[k].text.strip())
-
 
