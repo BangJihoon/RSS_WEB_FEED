@@ -4,21 +4,16 @@ from selenium.webdriver.chrome.options import Options
 import sites
 import mongo, message
 import sys
-
-# 크롬드라이버의 추가 옵션을 설정하는 함수
-options = Options()
-
-# chrome 에서 F11을 눌러 전체 화면으로 넓히는 옵션 --kiosk , --start-fullscreen
-options.add_argument('--kiosk')
-# options.add_argument('headless')    # 창이 안보이게 돌리기
-
-driver = webdriver.Chrome('C:/chromedriver', options=options)
-
 # 13개 사이트 16개 정보저장
 sys.stdout = open('result.txt', 'w',encoding='UTF8')
 
 date = datetime.now().strftime('%Y-%m-%d %H:%M')
 print(date + ' 실행결과\n\n')
+
+# 크롬드라이버의 추가 옵션을 설정하는 함수
+options = Options()
+options.add_argument('--kiosk')
+# options.add_argument('headless')    # 창이 안보이게 돌리기
 
 # ---------------------------- 동적인 웹 -----------------------
 '''
@@ -28,6 +23,7 @@ print(date + ' 실행결과\n\n')
     venture
     ccei
 '''
+driver = webdriver.Chrome('C:/chromedriver', options=options)
 
 # 과학기술정보통신부
 sites.msit_scan(driver)
@@ -35,8 +31,8 @@ sites.msit_scan(driver)
 # K-스타트업 (창업넷)
 sites.kstartup_scan(driver)
 
-# 서울특별시
-sites.seoul_scan(driver)
+# 서울특별시 - 관련공고가 적으므로 잠시 제외
+# sites.seoul_scan(driver)
 
 # 벤처기업협회
 sites.venture_scan(driver)
@@ -70,8 +66,8 @@ sites.nia_scan()
 # 한국정보통신 진흥원
 sites.kdata_scan()
 
-# 고용노동부
-sites.moel_scan()
+# 고용노동부 - 관련공고가없어 제외
+# sites.moel_scan()
 
 # 부산경제진흥원
 sites.bepa_scan()
