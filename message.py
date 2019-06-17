@@ -74,3 +74,13 @@ def telegram_push():
             mail_push()
             bot.sendMessage(chat_id=chat_id2, text=date+ '결과 \n메세지가 너무길어서 결과를 메일로 보내드렸습니다.')
 
+
+def site_error_push(name):
+    API_KEY = '818222067:AAFJWKcasPwz2DPRZu6HSFmzv8CerHHsm_k'
+    bot = telegram.Bot(token=API_KEY)
+    content = name," - 오류가 있습니다. 수정바랍니다."
+    # 우리톡방
+    chat_id2 = "-1001447356505"
+    bot.sendMessage(chat_id=chat_id2, text= content)
+
+
