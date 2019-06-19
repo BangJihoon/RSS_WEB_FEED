@@ -78,9 +78,8 @@ def telegram_push():
 def site_error_push(name):
     API_KEY = '818222067:AAFJWKcasPwz2DPRZu6HSFmzv8CerHHsm_k'
     bot = telegram.Bot(token=API_KEY)
-    content = name," - 오류가 있습니다. 수정바랍니다."
+    content = name+" - 오류가 발생하였습니다."
     # 우리톡방
     chat_id2 = "-1001447356505"
-    bot.sendMessage(chat_id=chat_id2, text= content)
-
+    bot.sendMessage(chat_id=chat_id2, text= content, encodeing="UTF8")
 
