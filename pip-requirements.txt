@@ -58,7 +58,7 @@ python-dateutil==2.8.0
 python-telegram-bot==11.1.0
 python-whois==0.7.1
 pytz==2019.1
-pywin32==223
+pywin32==301
 pywin32-ctypes==0.2.0
 pywinpty==0.5.5
 pyzmq==18.0.1
