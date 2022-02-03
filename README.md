@@ -1,25 +1,45 @@
 # 공고문 Crowlling 프로그램
 
-+ 개요 : 
-  + 2019년 3월 (주)블루바이저 인턴 기간 중 국가지원사업 내역에 대한 글을 수집하여 </br>웹서비스로 한눈에 보기위해 진행했던 프로젝트입니다.  
+```
+학점연계형 인턴중 대표님께서 원하시는 업무를 자동화하기 위해 시작한 1인 사이드 프로젝트.
+다양한 사이트에서 올라오는 국가지원사업 공고문을 한눈에 보기위해 만든 웹서비스
+```
 
-+ 내용 :  
-  + Jsp 웹페이지에 Python Flask서버를 통해 배포된 국가 공고문 RSS 서비스이다.</br>
-         매일 오전 스케줄링된 Python WebCrawling 프로그램을 통해, </br>20 여개 국가사업 공고 사이트에서 신규 공고문에 대한 내용을 MongoDB에 수집.</br>
-         해당 제목, 내용, 링크, 등록일자 등의 내용만을 받아와 연결시켜 보여주는 웹서비스이다.</br>
-         ajax와 selvet을 활용한 js를 통해 신속한 조회와 접근이 가능하도록 웹 기능을 넣었다.</br>
-         추가적으로 메일 오전 신규 공고문중 알림을 설정한 키워드의 공고문이 올라오면 사내 그룹웨어인 Slack과 Telegram을 통해
-         Bot이 담당자 해당 공고문의 내용과 url등을  알림으로 전송해준다.
-         
-+ Python Crawler : 
-  + 기존의 selenium모듈의 webdriver를 이용한 크롤링은 Dom이 그려지고 나서 접근하므로, 시간이 느리고,
-네트워크 환경에 따라 신뢰성이 떨어졌다.
-selenium의 단점을 보완하고 성능을 향상시키고자 
-웹 소스를 읽어와서 파싱하는 requests와 bs4를 이용하는 방법으로 변경해주었고,
-JS웹은 동적생성되므로 기존의 selenium으로 크롤링을 진행하여, 
-현재 혼합형식으로 구현되어있다.
+### 일시
++ 2019.03 ~2019.04
+
+### 개발환경 및 언어
+AWS Ubuntu,  Mongo DB Cloud Atlas, Javascript, Ajax, Chrome Web Driver, 텔레그램 API , Python(Flask, BS4, pymongo, request, selenium, slacker) 
+
+<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon&logoColor=white"/> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white"/> <img src="https://img.shields.io/badge/Java-FF160B?style=for-the-badge&logo=JAVA&logoColor=white"/> <img src="https://img.shields.io/badge/JAVASCRIPT-F7DF1E?style=for-the-badge&logo=JAVASCRIPT&logoColor=white"/>
+<img src="https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MYSQL&logoColor=white"/>
+<img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=Bootstrap&logoColor=white"/>
 
 
+### 릴리즈
+
+
+### 개발 기능 
++ 평일 오전 10시기준 국가 공고문 게시 사이트들을 순회하는 프로그램 자동 동작
++ 신규 공고문에 대해서 키워드 알림된 공고문의 갯수를 확인후 알림
++ 사내 그룹웨어인 Slack과 Telegram을 통해 웹서비스 URL과 몇건의 신규공고문이 올라왔는지 자동메세지
++ 웹서비스로 제공하는 내용은 제목, 내용, 링크, 등록일자 등의 내용만을 받아와 싱글페이지로 제공
+
+
+### 구현 설명 
++ BOOTSTRAP과 JS, AJAX를 이용해 비동기적이고 빠른 검색기능을 제공하는 웹 구성
++ Python Flask 이용해 서버 구축
++ Python WebDriver를 이용한 크롤링
++ 20 여개 국가사업 공고 사이트에서 신규 공고문에 대한 내용을 DBaaS인 MongoDB Atlas에 수집
++ ajax와 selvet을 활용한 js를 통해 비동기적인 조회와 접근이 가능하도록 웹 기능을 넣었다.</br>
++ 크롤링을 selenium모듈을 이용해서 Dom이 그려지고 나서 접근하도록 구성하니 전체 사이트 순회시간이 길고 느려
++ Selenium Library의 단점을 보완하고 성능을 향상시키고자 웹 소스를 읽어와서 파싱하는 Requests와 bs4를 추가적으로 이용하였다.
++ 동적으로 요청에 의해 웹이 랜더링되는 웹사이트를 제외하고, 서버사이드 언어가 아닌 정적인 웹의 경우는 후자를 이용했다.
+
+
+
+
+#### P.S
 + 코드 수행방법 : 
 ```
 #### pip-requirements.txt
@@ -36,7 +56,6 @@ pip-requirements.txt 를통해 한번에 필요한 모듈을 설치할수있다.
 #### pyinstaller 를 이용한 실행파일 만들기 
 main 을 실행파일로 만드는 방법				
 [pyinstaller -F main.py]
-
 
 #### 기타 txt 파일생성
 output은 크롤링하여 받아온 자료로 저장전 상태이며, 디비에 저장후, 가독성이 좋은 result.txt 를 만든다
