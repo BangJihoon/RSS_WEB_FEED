@@ -17,7 +17,7 @@ AWS Ubuntu,  Mongo DB Cloud Atlas, Javascript, Ajax, Chrome Web Driver, 텔레�
 
 
 ### 릴리즈
-
+![video](https://github.com/BangJihoon/RSS_WEB_FEED/blob/master/deploy.mp4)
 
 ### 개발 기능 
 + 평일 오전 10시기준 국가 공고문 게시 사이트들을 순회하는 프로그램 자동 동작
