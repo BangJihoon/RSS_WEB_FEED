@@ -9,15 +9,17 @@
 + 2019.03 ~2019.04
 
 ### 개발환경 및 언어
-AWS Ubuntu,  Mongo DB Cloud Atlas, Javascript, Ajax, Chrome Web Driver, 텔레그램 API , Python(Flask, BS4, pymongo, request, selenium, slacker) 
-
-<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon&logoColor=white"/> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white"/> <img src="https://img.shields.io/badge/Java-FF160B?style=for-the-badge&logo=JAVA&logoColor=white"/> <img src="https://img.shields.io/badge/JAVASCRIPT-F7DF1E?style=for-the-badge&logo=JAVASCRIPT&logoColor=white"/>
-<img src="https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MYSQL&logoColor=white"/>
+<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon&logoColor=white"/> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white"/> <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=Flask&logoColor=white"/> <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white"/>
 <img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=Bootstrap&logoColor=white"/>
 
 
-### 릴리즈
-![video](https://github.com/BangJihoon/RSS_WEB_FEED/blob/master/deploy.mp4)
+<br/>
+
+### 릴리즈 
+
+https://user-images.githubusercontent.com/26866859/152365402-36338f32-0846-4982-b47b-98c3e8e5793c.mp4
+
+<br/>
 
 ### 개발 기능 
 + 평일 오전 10시기준 국가 공고문 게시 사이트들을 순회하는 프로그램 자동 동작
@@ -39,25 +41,31 @@ AWS Ubuntu,  Mongo DB Cloud Atlas, Javascript, Ajax, Chrome Web Driver, 텔레�
 
 
 
-#### P.S
-+ 코드 수행방법 : 
-```
+<br/>
+<br/>
+
+#### P.S  
+<details>
+  <summary>코드 수행방법</summary>
+  
+
 #### pip-requirements.txt
-freeze 모듈을 이용하여 pip-requirements를 뽑아두었다. 		
-[pip freeze > pip-requirements.txt]
-pip-requirements.txt 를통해 한번에 필요한 모듈을 설치할수있다. 	
-[pip install pip-requirements.txt] 
++ freeze 모듈을 이용하여 pip-requirements를 뽑아두었다. 		
++ [pip freeze > pip-requirements.txt]
++ pip-requirements.txt 를통해 한번에 필요한 모듈을 설치할수있다. 	
++ [pip install pip-requirements.txt] 
 
 
 #### chromedrive 다운
-크롤링프로젝트 수정을 위해 C:안에 chromedrive가 필요하다.
++ 크롤링프로젝트 수정을 위해 C:안에 chromedrive가 필요하다.
 
 
 #### pyinstaller 를 이용한 실행파일 만들기 
-main 을 실행파일로 만드는 방법				
-[pyinstaller -F main.py]
++ main 을 실행파일로 만드는 방법				
++ [pyinstaller -F main.py]
 
 #### 기타 txt 파일생성
-output은 크롤링하여 받아온 자료로 저장전 상태이며, 디비에 저장후, 가독성이 좋은 result.txt 를 만든다
-저장후 정리된자료는 result는 메일로 보내준다.
-```
++ output은 크롤링하여 받아온 자료로 저장전 상태이며, 디비에 저장후, 가독성이 좋은 result.txt 를 만든다
++ 저장후 정리된자료는 result는 메일로 보내준다.
+
+  </details>
